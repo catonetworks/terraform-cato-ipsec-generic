@@ -22,9 +22,7 @@ provider "cato" {
 }
 
 module "ipsec-generic-ha-fully-customized" {
-  source                     = "../"
-  token                      = var.token
-  account_id                 = var.account_id
+  source                     = "catonetworks/ipsec-generic/cato"
   ha_tunnels                 = true
   site_name                  = "My-Cato-IPSec-Site-ha"
   site_description           = "IPSec Example Site"
@@ -70,9 +68,7 @@ provider "cato" {
 }
 
 module "ipsec-generic-ha-bgp-fully-customized" {
-  source                                     = "../"
-  token                                      = var.token
-  account_id                                 = var.account_id
+  source                                     = "catonetworks/ipsec-generic/cato"
   ha_tunnels                                 = true
   enable_bgp                                 = true
   site_name                                  = "My-Cato-IPSec-Site-ha-bgp"
@@ -129,9 +125,7 @@ provider "cato" {
 }
 
 module "ipsec-generic-non-ha" {
-  source                 = "../"
-  token                  = var.token
-  account_id             = var.account_id
+  source                 = "catonetworks/ipsec-generic/cato"
   ha_tunnels             = false
   site_name              = "My-Cato-IPSec-Site-non-ha"
   site_description       = "IPSec Example Site"
@@ -166,9 +160,7 @@ provider "cato" {
 }
 
 module "ipsec-generic-non-ha-bgp" {
-  source                  = "../"
-  token                   = var.token
-  account_id              = var.account_id
+  source                  = "catonetworks/ipsec-generic/cato"
   ha_tunnels              = false
   enable_bgp              = true
   site_name               = "My-Cato-IPSec-Site-non-ha-bgp"
