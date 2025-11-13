@@ -15,7 +15,41 @@ resource "cato_ipsec_site" "ipsec-site" {
   description          = var.site_description
   native_network_range = var.native_network_range
   site_location        = var.site_location
+  
+  lifecycle {
+    precondition {
+      condition     = !var.enable_bgp || var.peer_networks == null
+      error_message = "peer_networks cannot be set when enable_bgp is true. Use BGP routing instead."
+    }
+    precondition {
+      condition     = var.enable_bgp || var.peer_networks != null
+      error_message = "peer_networks must be set when enable_bgp is false."
+    }
+    precondition {
+      condition     = !var.enable_bgp || (var.primary_private_cato_ip != null && var.primary_private_site_ip != null)
+      error_message = "primary_private_cato_ip and primary_private_site_ip are required when enable_bgp is true."
+    }
+    precondition {
+      condition     = !var.enable_bgp || !var.ha_tunnels || (var.secondary_private_cato_ip != null && var.secondary_private_site_ip != null)
+      error_message = "secondary_private_cato_ip and secondary_private_site_ip are required when enable_bgp is true and ha_tunnels is enabled."
+    }
+  }
+  
   ipsec = {
+    connection_mode     = var.cato_connectionMode
+    identification_type = var.cato_identificationType
+    init_message = {
+      cipher    = var.cato_initMessage_cipher
+      dh_group  = var.cato_initMessage_dhGroup
+      integrity = var.cato_initMessage_integrity
+      prf       = var.cato_initMessage_prf
+    }
+    auth_message = {
+      cipher    = var.cato_authMessage_cipher
+      dh_group  = var.cato_authMessage_dhGroup
+      integrity = var.cato_authMessage_integrity
+    }
+    network_ranges = var.enable_bgp ? null : var.peer_networks
     primary = {
       destination_type  = var.primary_destination_type
       public_cato_ip_id = data.cato_allocatedIp.primary[0].items[0].id
@@ -25,7 +59,6 @@ resource "cato_ipsec_site" "ipsec-site" {
           public_site_ip  = var.peer_primary_public_ip
           private_cato_ip = var.enable_bgp ? var.primary_private_cato_ip : null
           private_site_ip = var.enable_bgp ? var.primary_private_site_ip : null
-
           psk = var.primary_connection_shared_key == null ? random_password.shared_key_primary.result : var.primary_connection_shared_key
           last_mile_bw = {
             downstream = var.downstream_bw
@@ -51,97 +84,8 @@ resource "cato_ipsec_site" "ipsec-site" {
         }
       ]
     } : null
+    
   }
-}
-
-# The Following 'terraform_data' resources allow us to set the specifics of the 
-# IPSEC configuration within Cato.  The Resource for this is being built, however, 
-# we need to set all of the information to make this module useful, especially 
-# when we aren't doing bgp and need to set the remote networks, or when default
-# P1 & P2 settings don't match out of the box. (Like W/ Azure and DHGroup 14).
-
-resource "terraform_data" "update_ipsec_site_details-bgp" {
-  #Null Resource has been replaced by "terraform_data"
-  depends_on = [cato_ipsec_site.ipsec-site]
-  count      = var.enable_bgp ? 1 : 0
-
-  triggers_replace = [
-    cato_ipsec_site.ipsec-site.id,
-    var.cato_authMessage_integrity,
-    var.cato_authMessage_cipher,
-    var.cato_authMessage_dhGroup,
-    var.cato_initMessage_prf,
-    var.cato_initMessage_integrity,
-    var.cato_initMessage_cipher,
-    var.cato_initMessage_dhGroup,
-    var.cato_connectionMode
-  ]
-
-  provisioner "local-exec" {
-    # This command uses a 'heredoc' to pipe the rendered JSON template
-    # directly into curl's standard input.
-    # The '--data @-' argument tells curl to read the POST data from stdin.
-    # For Debugging the API Call, add '-v' to the curl statement before the '-k'
-    command = <<EOT
-cat <<'PAYLOAD' | curl -k -X POST -H 'Accept: application/json' -H 'Content-Type: application/json' -H 'x-API-Key: ${var.token}' '${var.baseurl}' --data @-
-${templatefile("${path.module}/templates/update_site_payload.json.tftpl", {
-    account_id      = var.account_id
-    site_id         = cato_ipsec_site.ipsec-site.id
-    connection_mode = var.cato_connectionMode
-    init_dh_group   = var.cato_initMessage_dhGroup
-    init_cipher     = var.cato_initMessage_cipher
-    init_integrity  = var.cato_initMessage_integrity
-    init_prf        = var.cato_initMessage_prf
-    auth_dh_group   = var.cato_authMessage_dhGroup
-    auth_cipher     = var.cato_authMessage_cipher
-    auth_integrity  = var.cato_authMessage_integrity
-})}
-PAYLOAD
-EOT
-}
-}
-
-resource "terraform_data" "update_ipsec_site_details-nobgp" {
-  #Null Resource has been replaced by "terraform_data"
-  depends_on = [cato_ipsec_site.ipsec-site]
-  count      = var.enable_bgp ? 0 : 1
-
-  triggers_replace = [
-    cato_ipsec_site.ipsec-site.id,
-    var.cato_authMessage_integrity,
-    var.cato_authMessage_cipher,
-    var.cato_authMessage_dhGroup,
-    var.cato_initMessage_prf,
-    var.cato_initMessage_integrity,
-    var.cato_initMessage_cipher,
-    var.cato_initMessage_dhGroup,
-    var.cato_connectionMode,
-    var.peer_networks
-  ]
-
-  provisioner "local-exec" {
-    # This command uses a 'heredoc' to pipe the rendered JSON template
-    # directly into curl's standard input.
-    # The '--data @-' argument tells curl to read the POST data from stdin.
-    # For Debugging the API Call, add '-v' to the curl statement before the '-k'
-    command = <<EOT
-cat <<'PAYLOAD' | curl -k -X POST -H 'Accept: application/json' -H 'Content-Type: application/json' -H 'x-API-Key: ${var.token}' '${var.baseurl}' --data @-
-${templatefile("${path.module}/templates/update_site_payload_nobgp.json.tftpl", {
-    account_id          = var.account_id
-    site_id             = cato_ipsec_site.ipsec-site.id
-    connection_mode     = var.cato_connectionMode
-    network_ranges_json = jsonencode(var.peer_networks) #jsonencode converts the Terraform list to a JSON array string
-    init_dh_group       = var.cato_initMessage_dhGroup
-    init_cipher         = var.cato_initMessage_cipher
-    init_integrity      = var.cato_initMessage_integrity
-    init_prf            = var.cato_initMessage_prf
-    auth_dh_group       = var.cato_authMessage_dhGroup
-    auth_cipher         = var.cato_authMessage_cipher
-    auth_integrity      = var.cato_authMessage_integrity
-})}
-PAYLOAD
-EOT
-}
 }
 
 # If BGP Enabled, build the BGP Configuration on the Cato Side.

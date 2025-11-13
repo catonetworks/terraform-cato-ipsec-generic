@@ -221,16 +221,15 @@ Apache 2 Licensed. See [LICENSE](https://github.com/catonetworks/terraform-cato-
 
 | Name | Version |
 |------|---------|
-| <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 1.4 |
-| <a name="requirement_cato"></a> [cato](#requirement\_cato) | >= 0.0.24 |
+| <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 1.13 |
+| <a name="requirement_cato"></a> [cato](#requirement\_cato) | >= 0.0.54 |
 
 ## Providers
 
 | Name | Version |
 |------|---------|
-| <a name="provider_cato"></a> [cato](#provider\_cato) | >= 0.0.24 |
+| <a name="provider_cato"></a> [cato](#provider\_cato) | >= 0.0.54 |
 | <a name="provider_random"></a> [random](#provider\_random) | n/a |
-| <a name="provider_terraform"></a> [terraform](#provider\_terraform) | n/a |
 
 ## Modules
 
@@ -246,8 +245,6 @@ No modules.
 | [cato_license.license](https://registry.terraform.io/providers/catonetworks/cato/latest/docs/resources/license) | resource |
 | [random_password.shared_key_primary](https://registry.terraform.io/providers/hashicorp/random/latest/docs/resources/password) | resource |
 | [random_password.shared_key_secondary](https://registry.terraform.io/providers/hashicorp/random/latest/docs/resources/password) | resource |
-| [terraform_data.update_ipsec_site_details-bgp](https://registry.terraform.io/providers/hashicorp/terraform/latest/docs/resources/data) | resource |
-| [terraform_data.update_ipsec_site_details-nobgp](https://registry.terraform.io/providers/hashicorp/terraform/latest/docs/resources/data) | resource |
 | [cato_allocatedIp.primary](https://registry.terraform.io/providers/catonetworks/cato/latest/docs/data-sources/allocatedIp) | data source |
 | [cato_allocatedIp.secondary](https://registry.terraform.io/providers/catonetworks/cato/latest/docs/data-sources/allocatedIp) | data source |
 
@@ -255,8 +252,6 @@ No modules.
 
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
-| <a name="input_account_id"></a> [account\_id](#input\_account\_id) | Cato account ID | `number` | n/a | yes |
-| <a name="input_baseurl"></a> [baseurl](#input\_baseurl) | Cato API base URL | `string` | `"https://api.catonetworks.com/api/v1/graphql2"` | no |
 | <a name="input_cato_authMessage_cipher"></a> [cato\_authMessage\_cipher](#input\_cato\_authMessage\_cipher) | Cato Phase 2 ciphers.  The SA tunnel encryption method. Note: For situations where GCM isn’t supported for the INIT phase, <br/>  we recommend that you use the CBC algorithm for the INIT phase, and GCM for AUTH<br/>  Valid options are: <br/>    AES\_CBC\_128<br/>    AES\_CBC\_256<br/>    AES\_GCM\_128<br/>    AES\_GCM\_256<br/>    AUTOMATIC<br/>    DES3\_CBC<br/>    NONE<br/>    Default to AUTOMATIC | `string` | `"AUTOMATIC"` | no |
 | <a name="input_cato_authMessage_dhGroup"></a> [cato\_authMessage\_dhGroup](#input\_cato\_authMessage\_dhGroup) | Cato Phase 2 DHGroup.  The Diffie-Hellman Group. The first number is the DH-group number, and the second number is <br/>   the corresponding prime modulus size in bits<br/>   Valid Options are: <br/>    AUTOMATIC<br/>    DH\_14\_MODP2048<br/>    DH\_15\_MODP3072<br/>    DH\_16\_MODP4096<br/>    DH\_19\_ECP256<br/>    DH\_2\_MODP1024<br/>    DH\_20\_ECP384<br/>    DH\_21\_ECP521<br/>    DH\_5\_MODP1536<br/>    NONE | `string` | `"DH_15_MODP3072"` | no |
 | <a name="input_cato_authMessage_integrity"></a> [cato\_authMessage\_integrity](#input\_cato\_authMessage\_integrity) | Cato Phase 2 Hashing Algorithm.  The algorithm used to verify the integrity and authenticity of IPsec packets<br/>    Valid Options are: <br/>    AUTOMATIC<br/>    MD5<br/>    NONE<br/>    SHA1<br/>    SHA256<br/>    SHA384<br/>    SHA512<br/>    Default to AUTOMATIC | `string` | `"AUTOMATIC"` | no |
@@ -301,18 +296,17 @@ No modules.
 | <a name="input_primary_destination_type"></a> [primary\_destination\_type](#input\_primary\_destination\_type) | The destination type of the IPsec tunnel | `string` | `null` | no |
 | <a name="input_primary_pop_location_id"></a> [primary\_pop\_location\_id](#input\_primary\_pop\_location\_id) | Primary tunnel POP location ID | `string` | `null` | no |
 | <a name="input_primary_private_cato_ip"></a> [primary\_private\_cato\_ip](#input\_primary\_private\_cato\_ip) | The BGP peering IP address for the CatoPOP (APIPA). Required if enable\_bgp is true. | `string` | `null` | no |
-| <a name="input_primary_private_site_ip"></a> [primary\_private\_site\_ip](#input\_primary\_private\_site\_ip) | The BGP peering IP address for the Azure VPN Gateway (APIPA). Required if enable\_bgp is true. | `string` | `null` | no |
+| <a name="input_primary_private_site_ip"></a> [primary\_private\_site\_ip](#input\_primary\_private\_site\_ip) | The BGP peering IP address for the VPN Gateway (APIPA). Required if enable\_bgp is true. | `string` | `null` | no |
 | <a name="input_secondary_cato_pop_ip"></a> [secondary\_cato\_pop\_ip](#input\_secondary\_cato\_pop\_ip) | The IP address of the secondary Cato POP | `string` | `null` | no |
 | <a name="input_secondary_connection_shared_key"></a> [secondary\_connection\_shared\_key](#input\_secondary\_connection\_shared\_key) | Secondary connection shared key | `string` | `null` | no |
 | <a name="input_secondary_destination_type"></a> [secondary\_destination\_type](#input\_secondary\_destination\_type) | The destination type of the IPsec tunnel | `string` | `null` | no |
 | <a name="input_secondary_pop_location_id"></a> [secondary\_pop\_location\_id](#input\_secondary\_pop\_location\_id) | Secondary tunnel POP location ID | `string` | `null` | no |
-| <a name="input_secondary_private_cato_ip"></a> [secondary\_private\_cato\_ip](#input\_secondary\_private\_cato\_ip) | The BGP peering IP address for the CatoPOP (APIPA). Required if azure\_enable\_bgp is true.<br/>  The valid range for the reserved APIPA address in Azure Public is from 169.254.21.0 to 169.254.22.255. | `string` | `null` | no |
-| <a name="input_secondary_private_site_ip"></a> [secondary\_private\_site\_ip](#input\_secondary\_private\_site\_ip) | The BGP peering IP address for the Azure VPN Gateway (APIPA). Required if azure\_enable\_bgp is true.<br/>  The valid range for the reserved APIPA address in Azure Public is from 169.254.21.0 to 169.254.22.255. | `string` | `null` | no |
+| <a name="input_secondary_private_cato_ip"></a> [secondary\_private\_cato\_ip](#input\_secondary\_private\_cato\_ip) | The BGP peering IP address for the Azure VPN Gateway (APIPA). Required if enable\_bgp is true. | `string` | `null` | no |
+| <a name="input_secondary_private_site_ip"></a> [secondary\_private\_site\_ip](#input\_secondary\_private\_site\_ip) | The BGP peering IP address for the VPN Gateway (APIPA). Required if enable\_bgp is true. | `string` | `null` | no |
 | <a name="input_site_description"></a> [site\_description](#input\_site\_description) | Description of the IPSec site | `string` | n/a | yes |
-| <a name="input_site_location"></a> [site\_location](#input\_site\_location) | n/a | <pre>object({<br/>    city         = string<br/>    country_code = string<br/>    state_code   = string<br/>    timezone     = string<br/>  })</pre> | n/a | yes |
+| <a name="input_site_location"></a> [site\_location](#input\_site\_location) | n/a | <pre>object({<br/>    address      = optional(string)<br/>    city         = optional(string)<br/>    country_code = string<br/>    state_code   = optional(string)<br/>    timezone     = string<br/>  })</pre> | n/a | yes |
 | <a name="input_site_name"></a> [site\_name](#input\_site\_name) | Name of the IPSec site | `string` | n/a | yes |
 | <a name="input_site_type"></a> [site\_type](#input\_site\_type) | The type of the site | `string` | `"CLOUD_DC"` | no |
-| <a name="input_token"></a> [token](#input\_token) | Cato API token | `string` | n/a | yes |
 | <a name="input_upstream_bw"></a> [upstream\_bw](#input\_upstream\_bw) | Upstream bandwidth in Mbps | `number` | n/a | yes |
 
 ## Outputs
@@ -323,6 +317,7 @@ No modules.
 | <a name="output_cato_secondary_public_ip"></a> [cato\_secondary\_public\_ip](#output\_cato\_secondary\_public\_ip) | The Cato public IP address for the secondary tunnel (if HA is enabled). |
 | <a name="output_ipsec_site_configuration_details"></a> [ipsec\_site\_configuration\_details](#output\_ipsec\_site\_configuration\_details) | Detailed configuration of the IPsec site. |
 | <a name="output_ipsec_site_id"></a> [ipsec\_site\_id](#output\_ipsec\_site\_id) | The ID of the created Cato IPsec site. |
+| <a name="output_ipsec_site_name"></a> [ipsec\_site\_name](#output\_ipsec\_site\_name) | The ID of the created Cato IPsec site. |
 | <a name="output_license_assignment_id"></a> [license\_assignment\_id](#output\_license\_assignment\_id) | The ID of the license assignment, if a license was assigned. |
 | <a name="output_primary_bgp_peer_id"></a> [primary\_bgp\_peer\_id](#output\_primary\_bgp\_peer\_id) | The ID of the primary BGP peer, if BGP is enabled. |
 | <a name="output_primary_tunnel_psk"></a> [primary\_tunnel\_psk](#output\_primary\_tunnel\_psk) | The pre-shared key for the primary IPsec tunnel. This is sensitive and will be the generated key if not provided as an input. |

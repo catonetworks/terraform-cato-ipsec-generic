@@ -1,19 +1,3 @@
-variable "baseurl" {
-  description = "Cato API base URL"
-  type        = string
-  default     = "https://api.catonetworks.com/api/v1/graphql2"
-}
-
-variable "token" {
-  description = "Cato API token"
-  type        = string
-}
-
-variable "account_id" {
-  description = "Cato account ID"
-  type        = number
-}
-
 # -- BEGIN BGP VARIABLES -- 
 
 variable "enable_bgp" {
@@ -182,9 +166,10 @@ variable "site_type" {
 
 variable "site_location" {
   type = object({
-    city         = string
+    address      = optional(string)
+    city         = optional(string)
     country_code = string
-    state_code   = string
+    state_code   = optional(string)
     timezone     = string
   })
 }
@@ -199,12 +184,11 @@ variable "primary_private_cato_ip" {
 
 variable "primary_private_site_ip" {
   description = <<EOF
-  The BGP peering IP address for the Azure VPN Gateway (APIPA). Required if enable_bgp is true.
+  The BGP peering IP address for the VPN Gateway (APIPA). Required if enable_bgp is true.
   EOF
   type        = string
   default     = null
 }
-
 
 variable "primary_destination_type" {
   description = "The destination type of the IPsec tunnel"
@@ -220,8 +204,7 @@ variable "primary_pop_location_id" {
 
 variable "secondary_private_cato_ip" {
   description = <<EOF
-  The BGP peering IP address for the CatoPOP (APIPA). Required if azure_enable_bgp is true.
-  The valid range for the reserved APIPA address in Azure Public is from 169.254.21.0 to 169.254.22.255.
+  The BGP peering IP address for the Azure VPN Gateway (APIPA). Required if enable_bgp is true.
   EOF
   type        = string
   default     = null
@@ -229,8 +212,7 @@ variable "secondary_private_cato_ip" {
 
 variable "secondary_private_site_ip" {
   description = <<EOF
-  The BGP peering IP address for the Azure VPN Gateway (APIPA). Required if azure_enable_bgp is true.
-  The valid range for the reserved APIPA address in Azure Public is from 169.254.21.0 to 169.254.22.255.
+  The BGP peering IP address for the VPN Gateway (APIPA). Required if enable_bgp is true.
   EOF
   type        = string
   default     = null

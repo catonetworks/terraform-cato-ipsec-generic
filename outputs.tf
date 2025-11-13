@@ -3,16 +3,22 @@ output "ipsec_site_id" {
   value       = cato_ipsec_site.ipsec-site.id
 }
 
+output "ipsec_site_name" {
+  description = "The ID of the created Cato IPsec site."
+  value       = cato_ipsec_site.ipsec-site.name
+}
+
+
 output "primary_tunnel_psk" {
   description = "The pre-shared key for the primary IPsec tunnel. This is sensitive and will be the generated key if not provided as an input."
   value       = cato_ipsec_site.ipsec-site.ipsec.primary.tunnels[0].psk
-  sensitive   = true
+  # sensitive   = true
 }
 
 output "secondary_tunnel_psk" {
   description = "The pre-shared key for the secondary IPsec tunnel if HA is enabled. This is sensitive and will be the generated key if not provided as an input."
   value       = var.ha_tunnels ? cato_ipsec_site.ipsec-site.ipsec.secondary.tunnels[0].psk : null
-  sensitive   = true
+  # sensitive   = true
 }
 
 output "cato_primary_public_ip" {
@@ -38,19 +44,19 @@ output "secondary_bgp_peer_id" {
 output "ipsec_site_configuration_details" {
   description = "Detailed configuration of the IPsec site."
   value       = cato_ipsec_site.ipsec-site
-  sensitive   = true # Contains PSKs
+  # sensitive   = true # Contains PSKs
 }
 
 output "random_primary_shared_key_result" {
   description = "The randomly generated primary shared key. Only populated if a primary_connection_shared_key was not provided."
   value       = random_password.shared_key_primary.result
-  sensitive   = true
+  # sensitive   = true
 }
 
 output "random_secondary_shared_key_result" {
   description = "The randomly generated secondary shared key. Only populated if a secondary_connection_shared_key was not provided and HA tunnels are enabled."
   value       = var.ha_tunnels ? random_password.shared_key_secondary.result : null
-  sensitive   = true
+  # sensitive   = true
 }
 
 output "license_assignment_id" {
