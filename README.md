@@ -192,8 +192,8 @@ For more information on site_location syntax, use the [Cato CLI](https://github.
 
 ```bash
 $ pip3 install catocli
-$ export CATO_TOKEN="your-api-token-here"
-$ export CATO_ACCOUNT_ID="your-account-id"
+$ export TF_VAR_CATO_TOKEN="your-api-token-here"
+$ export TF_VAR_CATO_ACCOUNT_ID="your-account-id"
 $ catocli query siteLocation -h
 $ catocli query siteLocation '{"filters":[{"search": "San Diego","field":"city","operation":"exact"}]}' -p
 ```
@@ -212,15 +212,15 @@ Apache 2 Licensed. See [LICENSE](https://github.com/catonetworks/terraform-cato-
 ## Requirements
 
 | Name | Version |
-|------|---------|
-| <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 1.13 |
-| <a name="requirement_cato"></a> [cato](#requirement\_cato) | >= 0.0.54 |
+| ---- | ------- |
+| <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 1.5 |
+| <a name="requirement_cato"></a> [cato](#requirement\_cato) | >= 0.0.70 |
 
 ## Providers
 
 | Name | Version |
-|------|---------|
-| <a name="provider_cato"></a> [cato](#provider\_cato) | >= 0.0.54 |
+| ---- | ------- |
+| <a name="provider_cato"></a> [cato](#provider\_cato) | >= 0.0.70 |
 | <a name="provider_random"></a> [random](#provider\_random) | n/a |
 
 ## Modules
@@ -230,7 +230,7 @@ No modules.
 ## Resources
 
 | Name | Type |
-|------|------|
+| ---- | ---- |
 | [cato_bgp_peer.backup](https://registry.terraform.io/providers/catonetworks/cato/latest/docs/resources/bgp_peer) | resource |
 | [cato_bgp_peer.primary](https://registry.terraform.io/providers/catonetworks/cato/latest/docs/resources/bgp_peer) | resource |
 | [cato_ipsec_site.ipsec-site](https://registry.terraform.io/providers/catonetworks/cato/latest/docs/resources/ipsec_site) | resource |
@@ -243,7 +243,7 @@ No modules.
 ## Inputs
 
 | Name | Description | Type | Default | Required |
-|------|-------------|------|---------|:--------:|
+| ---- | ----------- | ---- | ------- | :------: |
 | <a name="input_cato_authMessage_cipher"></a> [cato\_authMessage\_cipher](#input\_cato\_authMessage\_cipher) | Cato Phase 2 ciphers.  The SA tunnel encryption method. Note: For situations where GCM isn’t supported for the INIT phase, <br/>  we recommend that you use the CBC algorithm for the INIT phase, and GCM for AUTH<br/>  Valid options are: <br/>    AES\_CBC\_128<br/>    AES\_CBC\_256<br/>    AES\_GCM\_128<br/>    AES\_GCM\_256<br/>    AUTOMATIC<br/>    DES3\_CBC<br/>    NONE<br/>    Default to AUTOMATIC | `string` | `"AUTOMATIC"` | no |
 | <a name="input_cato_authMessage_dhGroup"></a> [cato\_authMessage\_dhGroup](#input\_cato\_authMessage\_dhGroup) | Cato Phase 2 DHGroup.  The Diffie-Hellman Group. The first number is the DH-group number, and the second number is <br/>   the corresponding prime modulus size in bits<br/>   Valid Options are: <br/>    AUTOMATIC<br/>    DH\_14\_MODP2048<br/>    DH\_15\_MODP3072<br/>    DH\_16\_MODP4096<br/>    DH\_19\_ECP256<br/>    DH\_2\_MODP1024<br/>    DH\_20\_ECP384<br/>    DH\_21\_ECP521<br/>    DH\_5\_MODP1536<br/>    NONE | `string` | `"DH_15_MODP3072"` | no |
 | <a name="input_cato_authMessage_integrity"></a> [cato\_authMessage\_integrity](#input\_cato\_authMessage\_integrity) | Cato Phase 2 Hashing Algorithm.  The algorithm used to verify the integrity and authenticity of IPsec packets<br/>    Valid Options are: <br/>    AUTOMATIC<br/>    MD5<br/>    NONE<br/>    SHA1<br/>    SHA256<br/>    SHA384<br/>    SHA512<br/>    Default to AUTOMATIC | `string` | `"AUTOMATIC"` | no |
@@ -304,7 +304,7 @@ No modules.
 ## Outputs
 
 | Name | Description |
-|------|-------------|
+| ---- | ----------- |
 | <a name="output_cato_primary_public_ip"></a> [cato\_primary\_public\_ip](#output\_cato\_primary\_public\_ip) | The Cato public IP address for the primary tunnel. |
 | <a name="output_cato_secondary_public_ip"></a> [cato\_secondary\_public\_ip](#output\_cato\_secondary\_public\_ip) | The Cato public IP address for the secondary tunnel (if HA is enabled). |
 | <a name="output_ipsec_site_configuration_details"></a> [ipsec\_site\_configuration\_details](#output\_ipsec\_site\_configuration\_details) | Detailed configuration of the IPsec site. |
